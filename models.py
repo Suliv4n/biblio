@@ -24,5 +24,13 @@ class Subject(models.Model):
     def __str__(self):
         return self.label
     
+
+class Comment(models.Model):
+	user = models.ForeignKey("User")
+	comment = models.TextField()
+	date = models.DateField()
+	book = models.ForeignKey("Book")
 	
+	def __str__(self):
+		return self.label
 

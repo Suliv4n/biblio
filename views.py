@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-#
 
 # Create your views here.
-from biblio.models import Book, Author, Subject
+from biblio.models import Book, Author, Subject, Comment
 from django.shortcuts import render_to_response, render
 
 from django.http import HttpResponseRedirect
@@ -46,12 +46,18 @@ def show_books(request):
 		{"books" : Book.objects.order_by("title")})
 
 def show_author(request, idAuthor):
-	con.update(csrf(request))
-	
+	#con.update(csrf(request))
 	return render(
 		request,
 		"biblio/author.html",
 		{"author" : Author.objects.get(pk=idAuthor)})
+
+def show_book(request, idBook):
+	return render(
+		request,
+		"biblio/book.html",
+		{"book" : Book.objects.get(pk=idBook)}
+		{"comments": Comment.objects.get(book=idBook)})		
 		
 def show_subjects(request):
 	return render(
@@ -98,7 +104,7 @@ def show_addAuthorForm(request):
             return render_to_response("biblio/addAuthor.html", con, context_instance=RequestContext(request)) 
     return render_to_response("biblio/addAuthor.html", con, context_instance=RequestContext(request))
 
-
+@permission_required("biblio.can_edit_database")
 def show_addBookForm(request):
     form = BookForm()
     con={'form':form}
@@ -150,7 +156,7 @@ def login_page(request):
 				url = request.GET.get("next","/")
 				return HttpResponseRedirect(url)
 		else:
-			con["message"] = "Paramètres non valides"
+			con["message"] = "Paramètres non valides."
 				
 	else:
 		form = LoginForm()
